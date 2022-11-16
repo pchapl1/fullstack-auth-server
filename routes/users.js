@@ -15,11 +15,16 @@ router.get('/', function(req, res, next) {
 
 router.get('/message', function(req, res, next){
 
-  const tokenKeyHeader = process.env.TOKEN_HEADER_KEY
-  const token = req.headers(tokenKeyHeader)
+  const tokenHeaderKey = process.env.TOKEN_HEADER_KEY
+  // const token = req.header(tokenHeaderKey)
+  const token = req.get('token')
 
+  console.log(token)
   const jwtSecretKey = process.env.JWT_SECRET_KEY;
   const verifiedToken = jwt.verify(token, jwtSecretKey);
+
+
+  console.log(verifiedToken.userData.scope)
 
   if (!verifiedToken) {
     return res.json({
@@ -28,14 +33,14 @@ router.get('/message', function(req, res, next){
     });
   }
 
-  if (userData && userData.scope === "user") {
+  if (verifiedToken.userData && verifiedToken.userData.scope === "user") {
     return res.json({
       success: true,
       message: "I am a normal user",
     });
   }
   
-  if (userData && userData.scope === "admin") {
+  if (verifiedToken.userData && verifiedToken.userData.scope === "admin") {
     return res.json({
       success: true,
       message: "I am an admin user",
