@@ -16,15 +16,13 @@ router.get('/', function(req, res, next) {
 router.get('/message', function(req, res, next){
 
   const tokenHeaderKey = process.env.TOKEN_HEADER_KEY
-  // const token = req.header(tokenHeaderKey)
-  const token = req.get('token')
+  const token = req.header(tokenHeaderKey)
+  // const token = req.get('token')
 
-  console.log(token)
   const jwtSecretKey = process.env.JWT_SECRET_KEY;
   const verifiedToken = jwt.verify(token, jwtSecretKey);
 
 
-  console.log(verifiedToken.userData.scope)
 
   if (!verifiedToken) {
     return res.json({
